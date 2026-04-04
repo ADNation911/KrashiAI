@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  # Vite outputs production files to `dist` by default
+  publish = "dist"
+
+# SPA redirect so client-side routing (react-router) works on Netlify
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Optional: set a directory for Netlify Functions (not used by default here)
+# functions = "netlify/functions"
