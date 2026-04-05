@@ -63,9 +63,10 @@ A cutting-edge, responsive React web application built with **Vite** that provid
    # Runs on port 8081
    ```
 
-4. **Flask ML Backend Setup (Optional but recommended for full ML power)**
+4. **Flask ML Backend Setup (Mandatory for Crop Recommendation Engine)**
+   The backend Machine Learning models must be running to receive crop predictions.
    ```bash
-   cd ../Crop-Recommendation-System
+   cd Crop-Recommendation-System
    pip install -r requirements.txt
    python app.py
    # Runs on port 5000
@@ -123,6 +124,3 @@ SPMProject/
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
