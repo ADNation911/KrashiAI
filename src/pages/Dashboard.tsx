@@ -9,6 +9,7 @@ import {
 } from 'react-icons/md';
 
 import { useLanguage } from '../context/LanguageContext';
+import { useRecommendation } from '../context/RecommendationContext';
 
 // --- THEME ---
 const colors = {
@@ -49,6 +50,57 @@ const DEFAULT_LOCATION: LocationData = {
   latitude: 19.9975,
   longitude: 73.7898
 };
+
+const dashboardCopy = {
+  en: {
+    latestSuggestion: 'Latest Suggestion',
+    noSuggestion: 'No crop recommendation yet. Enter farm data to get started.',
+    openSuggestion: 'Open Suggestions',
+    quickStartText: 'Upload a file or enter farm values to get better crop guidance.',
+    camera: 'Camera',
+    cameraSoon: 'Camera feature coming soon!',
+    searchLocation: 'Search Location',
+    searchCity: 'Search city...',
+    searching: 'Searching...',
+    setLocation: 'Set Location',
+    loadingWeather: 'Loading weather...',
+    enterFarmData: 'Enter Farm Data',
+    viewSuggestions: 'View Suggestions',
+    bannerHint: 'Check current conditions, weather outlook, and recommendation shortcuts in one place.',
+  },
+  hi: {
+    latestSuggestion: 'नवीनतम सुझाव',
+    noSuggestion: 'अभी कोई फसल सिफारिश नहीं है। शुरू करने के लिए फार्म डेटा दर्ज करें।',
+    openSuggestion: 'सुझाव खोलें',
+    quickStartText: 'बेहतर फसल मार्गदर्शन के लिए फ़ाइल अपलोड करें या फार्म डेटा दर्ज करें।',
+    camera: 'कैमरा',
+    cameraSoon: 'कैमरा सुविधा जल्द आ रही है!',
+    searchLocation: 'स्थान खोजें',
+    searchCity: 'शहर खोजें...',
+    searching: 'खोज जारी है...',
+    setLocation: 'स्थान सेट करें',
+    loadingWeather: 'मौसम लोड हो रहा है...',
+    enterFarmData: 'फार्म डेटा दर्ज करें',
+    viewSuggestions: 'सुझाव देखें',
+    bannerHint: 'एक ही जगह पर वर्तमान स्थिति, मौसम पूर्वानुमान और सुझाव शॉर्टकट देखें।',
+  },
+  te: {
+    latestSuggestion: 'తాజా సూచన',
+    noSuggestion: 'ఇంకా పంట సూచన లేదు. ప్రారంభించడానికి ఫారం డేటా నమోదు చేయండి.',
+    openSuggestion: 'సూచనలు తెరవండి',
+    quickStartText: 'మెరుగైన పంట మార్గదర్శకత్వం కోసం ఫైల్ అప్‌లోడ్ చేయండి లేదా ఫారం డేటా నమోదు చేయండి.',
+    camera: 'కెమెరా',
+    cameraSoon: 'కెమెరా ఫీచర్ త్వరలో వస్తుంది!',
+    searchLocation: 'స్థానం వెతకండి',
+    searchCity: 'నగరం వెతకండి...',
+    searching: 'వెతుకుతోంది...',
+    setLocation: 'స్థానం సెట్ చేయండి',
+    loadingWeather: 'వాతావరణం లోడ్ అవుతోంది...',
+    enterFarmData: 'ఫారం డేటా నమోదు చేయండి',
+    viewSuggestions: 'సూచనలు చూడండి',
+    bannerHint: 'ప్రస్తుత పరిస్థితులు, వాతావరణ అంచనా, సూచనల షార్ట్‌కట్‌లు అన్నీ ఒకేచోట చూడండి.',
+  },
+} as const;
 
 // --- ICON HELPER ---
 const WeatherIcon = ({ name, size = 24, color = '#000' }: any) => {
@@ -92,6 +144,8 @@ const DashboardCard: React.FC<{
 
 const Dashboard: React.FC = () => {
   const { t, language } = useLanguage();
+  const { data } = useRecommendation();
+  const ui = dashboardCopy[language];
   const navigate = useNavigate();
 
   // --- STATE ---
@@ -108,6 +162,7 @@ const Dashboard: React.FC = () => {
   const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
   const [selectedSuggestion, setSelectedSuggestion] = useState<any | null>(null);
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const latestRecommendation = data?.recommendations?.recommendations?.[0];
 
   // --- API FUNCTIONS ---
   const fetchWeatherData = useCallback(async (lat: number, lon: number) => {
@@ -137,8 +192,10 @@ const Dashboard: React.FC = () => {
         return 'cloud';
       };
 
+      const locale =
+        language === 'hi' ? 'hi-IN' : language === 'te' ? 'te-IN' : 'en-IN';
       const formattedForecast = data.daily.time.slice(0, 7).map((date: string, index: number) => ({
-        date: new Date(date).toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-IN', { day: '2-digit', month: '2-digit' }),
+        date: new Date(date).toLocaleDateString(locale, { day: '2-digit', month: '2-digit' }),
         icon: mapCodeToIcon(data.daily.weathercode[index]),
         tempHigh: Math.round(data.daily.temperature_2m_max[index]),
         tempLow: Math.round(data.daily.temperature_2m_min[index]),
@@ -205,9 +262,9 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const closeModal = () => { setIsModalVisible(false); setCityInput(''); setSuggestions([]); };
+  const closeModal = () => { setIsModalVisible(false); setCityInput(''); setSuggestions([]); setSelectedSuggestion(null); };
   const handleUpload = () => document.getElementById('file-upload')?.click();
-  const handleCamera = () => alert("Camera feature coming soon!");
+  const handleCamera = () => alert(ui.cameraSoon);
 
   // --- RENDER ---
   return (
@@ -221,7 +278,7 @@ const Dashboard: React.FC = () => {
         </div>
         <div style={styles.headerLocationPill}>
           <MdLocationOn color={colors.primary} size={22} />
-          <span style={styles.locationTextPill}>{location?.name || "Loading..."}</span>
+          <span style={styles.locationTextPill}>{location?.name || ui.loadingWeather}</span>
           <button onClick={() => setIsModalVisible(true)} style={styles.pillIconBtn}><MdEdit size={16} /></button>
           <button onClick={() => { if (navigator.geolocation) { navigator.geolocation.getCurrentPosition(pos => resolveLocation(pos.coords.latitude, pos.coords.longitude)); } }} style={styles.pillIconBtn}><MdGpsFixed size={16} /></button>
         </div>
@@ -235,6 +292,7 @@ const Dashboard: React.FC = () => {
           {/* Quick Actions Card */}
           <DashboardCard style={styles.quickActionsCard}>
             <h3 style={styles.cardTitle}>{t.quickAccess || "Quick Access"}</h3>
+            <p style={styles.quickActionText}>{ui.quickStartText}</p>
 
             <div style={styles.actionButtons}>
               <button style={styles.actionBtnPrimary} onClick={handleUpload}>
@@ -242,9 +300,37 @@ const Dashboard: React.FC = () => {
                 <input id="file-upload" type="file" hidden />
               </button>
               <button style={styles.actionBtnSecondary} onClick={handleCamera}>
-                <MdCameraAlt size={20} /> Camera
+                <MdCameraAlt size={20} /> {ui.camera}
               </button>
             </div>
+          </DashboardCard>
+
+          <DashboardCard style={styles.latestSuggestionCard}>
+            <h3 style={styles.cardTitle}>{ui.latestSuggestion}</h3>
+            {latestRecommendation ? (
+              <>
+                <div style={styles.latestSuggestionCrop}>{latestRecommendation.crop}</div>
+                <div style={styles.latestSuggestionScore}>
+                  {latestRecommendation.score}% {t.matchPercentage || "Match"}
+                </div>
+                <button
+                  style={styles.secondaryActionButton}
+                  onClick={() => navigate('/CropRecommendations')}
+                >
+                  {ui.openSuggestion}
+                </button>
+              </>
+            ) : (
+              <>
+                <p style={styles.quickActionText}>{ui.noSuggestion}</p>
+                <button
+                  style={styles.secondaryActionButton}
+                  onClick={() => navigate('/DataEntryForm')}
+                >
+                  {ui.enterFarmData}
+                </button>
+              </>
+            )}
           </DashboardCard>
 
           {/* Weather Alert (If Active) */}
@@ -267,6 +353,15 @@ const Dashboard: React.FC = () => {
             <div style={styles.bannerContent}>
               <h2 style={styles.bannerTitle}>{t.smartCropRecommendation || "Smart Crop AI"}</h2>
               <p style={styles.bannerText}>{t.smartCropSubtitle || "Get recommendations based on your soil & weather."}</p>
+              <p style={styles.bannerHint}>{ui.bannerHint}</p>
+              <div style={styles.bannerActions}>
+                <button style={styles.bannerPrimaryButton} onClick={() => navigate('/DataEntryForm')}>
+                  {ui.enterFarmData}
+                </button>
+                <button style={styles.bannerSecondaryButton} onClick={() => navigate('/CropRecommendations')}>
+                  {ui.viewSuggestions}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -294,9 +389,9 @@ const Dashboard: React.FC = () => {
                 <span style={styles.cardHeaderTitle}>{t.soilCondition || "Soil"}</span>
               </div>
               <div style={styles.soilList}>
-                <SoilRow label="pH Level" value="6.8" status="good" />
-                <SoilRow label="Nitrogen" value="Medium" status="warning" />
-                <SoilRow label="Phosphorus" value="High" status="good" />
+                <SoilRow label={t.phLevel || "pH Level"} value="6.8" status="good" />
+                <SoilRow label={t.nitrogen || "Nitrogen"} value={t.mediumYield || "Medium"} status="warning" />
+                <SoilRow label={t.phosphorus || "Phosphorus"} value={t.highYield || "High"} status="good" />
               </div>
               <div style={styles.soilFooter}>
                 <MdCheckCircle color={colors.success} size={16} />
@@ -315,13 +410,14 @@ const Dashboard: React.FC = () => {
                 <div key={i} style={styles.forecastRow}>
                   <span style={styles.forecastDay}>{item.date.split(',')[0]}</span>
                   <div style={styles.forecastIcon}><WeatherIcon name={item.icon} size={24} color={colors.primary} /></div>
+                  <span style={styles.forecastRain}>{item.rain}%</span>
                   <div style={styles.forecastTemps}>
                     <span style={{ fontWeight: 'bold' }}>{item.tempHigh}°</span>
                     <span style={{ color: colors.textLight, fontSize: 12 }}>{item.tempLow}°</span>
                   </div>
                 </div>
               ))}
-              {loading && <div style={{ textAlign: 'center', padding: 20 }}>Loading weather...</div>}
+              {loading && <div style={{ textAlign: 'center', padding: 20 }}>{ui.loadingWeather}</div>}
             </div>
           </DashboardCard>
         </div>
@@ -338,19 +434,19 @@ const Dashboard: React.FC = () => {
         <div style={styles.modalOverlay} onClick={closeModal}>
           <div style={styles.modal} onClick={e => e.stopPropagation()}>
             <div style={styles.modalHeader}>
-              <h3>Search Location</h3>
+              <h3>{ui.searchLocation}</h3>
               <button onClick={closeModal} style={styles.closeBtn}><MdClose /></button>
             </div>
             <div style={styles.inputWrapper}>
               <MdSearch color={colors.textLight} size={20} />
               <input
                 style={styles.modalInput}
-                placeholder="Search city..."
+                placeholder={ui.searchCity}
                 value={cityInput}
                 onChange={e => handleLocationSearch(e.target.value)}
               />
             </div>
-            {isSuggestionsLoading && <div style={{ padding: 10, fontSize: 12 }}>Searching...</div>}
+            {isSuggestionsLoading && <div style={{ padding: 10, fontSize: 12 }}>{ui.searching}</div>}
             <div style={styles.suggestionsList}>
               {suggestions.map((s, i) => (
                 <div key={i} style={styles.suggestionItem} onClick={() => { setSelectedSuggestion(s); setCityInput(s.name); }}>
@@ -358,7 +454,7 @@ const Dashboard: React.FC = () => {
                 </div>
               ))}
             </div>
-            <button style={styles.submitBtn} onClick={submitLocation}>Set Location</button>
+            <button style={styles.submitBtn} onClick={submitLocation}>{ui.setLocation}</button>
           </div>
         </div>
       )}
@@ -391,7 +487,7 @@ const SoilRow = ({ label, value, status }: any) => (
 // --- STYLES (CSS GRID) ---
 const styles: Record<string, React.CSSProperties> = {
   container: {
-    backgroundColor: colors.background,
+    background: 'radial-gradient(circle at top left, rgba(76,175,80,0.14), transparent 32%), linear-gradient(180deg, #f4fbf6 0%, #eef4f0 100%)',
     minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
@@ -403,8 +499,9 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '20px 30px',
-    backgroundColor: colors.surface,
+    backgroundColor: 'rgba(255,255,255,0.82)',
     borderBottom: `1px solid ${colors.border}`,
+    backdropFilter: 'blur(10px)',
   },
   headerTitle: { fontSize: 24, fontWeight: '800', color: colors.textPrimary, margin: 0 },
   headerSubtitle: { fontSize: 14, color: colors.textSecondary, margin: 0 },
@@ -415,11 +512,12 @@ const styles: Record<string, React.CSSProperties> = {
   headerLocationPill: {
     display: 'flex',
     alignItems: 'center',
-    backgroundColor: '#F3F4F6', // Light gray background
+    backgroundColor: '#ffffff',
     borderRadius: '24px',
     padding: '8px 16px',
     gap: '8px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+    boxShadow: '0 8px 20px rgba(15,23,42,0.06)',
+    border: `1px solid ${colors.border}`,
   },
   locationTextPill: {
     fontWeight: '700', // Bolder text
@@ -459,16 +557,17 @@ const styles: Record<string, React.CSSProperties> = {
 
   // --- CARDS ---
   cardBase: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.96)',
+    borderRadius: 20,
     padding: 20,
-    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+    boxShadow: '0 14px 28px rgba(15,23,42,0.06)',
     border: `1px solid ${colors.border}`,
     boxSizing: 'border-box',
   },
   cardTitle: { fontSize: 16, fontWeight: '700', margin: '0 0 16px 0', color: colors.textPrimary },
   cardTitleSm: { fontSize: 14, fontWeight: '700', color: colors.textPrimary },
   cardSubtitle: { fontSize: 12, color: colors.textSecondary },
+  quickActionText: { fontSize: 13, color: colors.textSecondary, lineHeight: 1.6, margin: '0 0 14px 0' },
 
   // Quick Actions
   actionButtons: { display: 'flex', gap: 10, marginBottom: 16 },
@@ -479,8 +578,33 @@ const styles: Record<string, React.CSSProperties> = {
   },
   actionBtnSecondary: {
     flex: 1, padding: '10px', borderRadius: 8, border: 'none', cursor: 'pointer',
-    backgroundColor: colors.primary, color: 'white', fontWeight: 600,
+    background: `linear-gradient(135deg, ${colors.gradientStart}, ${colors.gradientEnd})`, color: 'white', fontWeight: 600,
     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
+  },
+  latestSuggestionCard: {
+    background: 'linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(236,253,245,0.98) 100%)',
+  },
+  latestSuggestionCrop: {
+    fontSize: 22,
+    fontWeight: 800,
+    color: colors.textPrimary,
+    marginBottom: 8,
+  },
+  latestSuggestionScore: {
+    fontSize: 14,
+    fontWeight: 700,
+    color: colors.primary,
+    marginBottom: 14,
+  },
+  secondaryActionButton: {
+    width: '100%',
+    padding: 11,
+    borderRadius: 10,
+    border: `1px solid ${colors.border}`,
+    backgroundColor: colors.white,
+    color: colors.textPrimary,
+    fontWeight: 700,
+    cursor: 'pointer',
   },
   diseaseCard: {
     background: 'linear-gradient(135deg, #4CAF50, #2E7D32)',
@@ -489,7 +613,8 @@ const styles: Record<string, React.CSSProperties> = {
   },
   alertBox: {
     backgroundColor: '#FFF8E1', borderLeft: `4px solid ${colors.warning}`,
-    padding: 12, borderRadius: 8, display: 'flex', alignItems: 'flex-start', marginTop: 20
+    padding: 12, borderRadius: 12, display: 'flex', alignItems: 'flex-start', marginTop: 4,
+    boxShadow: '0 8px 18px rgba(245,158,11,0.08)',
   },
   iconCircle: {
     width: 40, height: 40, borderRadius: 20, backgroundColor: '#E3F2FD',
@@ -498,18 +623,40 @@ const styles: Record<string, React.CSSProperties> = {
 
   // Center Content
   banner: {
-    height: 180, borderRadius: 16,
-    backgroundImage: 'url(https://i.ibb.co/SD9MMMpL/Farmer-Working.jpg)',
-    backgroundSize: 'cover', backgroundPosition: 'center',
-    position: 'relative', overflow: 'hidden'
+    minHeight: 300, borderRadius: 24,
+    backgroundImage: 'url(https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1400&q=80)',
+    backgroundSize: 'cover', backgroundPosition: 'center 42%',
+    position: 'relative', overflow: 'hidden',
+    boxShadow: '0 22px 40px rgba(15,23,42,0.14)',
   },
   bannerContent: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
-    padding: 20, background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+    padding: '30px 28px',
+    background: 'linear-gradient(to top, rgba(0,0,0,0.84), rgba(0,0,0,0.48) 38%, rgba(0,0,0,0.08))',
     color: 'white'
   },
-  bannerTitle: { margin: 0, fontSize: 20, fontWeight: 'bold' },
-  bannerText: { margin: '4px 0 0', fontSize: 14, opacity: 0.9 },
+  bannerTitle: { margin: 0, fontSize: 30, fontWeight: 'bold', maxWidth: 560, lineHeight: 1.15 },
+  bannerText: { margin: '8px 0 0', fontSize: 16, opacity: 0.95, maxWidth: 520 },
+  bannerHint: { margin: '12px 0 0', fontSize: 14, lineHeight: 1.65, opacity: 0.92, maxWidth: 600 },
+  bannerActions: { display: 'flex', gap: 12, marginTop: 22, flexWrap: 'wrap' },
+  bannerPrimaryButton: {
+    padding: '12px 18px',
+    borderRadius: 12,
+    border: 'none',
+    backgroundColor: colors.white,
+    color: colors.primary,
+    fontWeight: 700,
+    cursor: 'pointer',
+  },
+  bannerSecondaryButton: {
+    padding: '12px 18px',
+    borderRadius: 12,
+    border: '1px solid rgba(255,255,255,0.3)',
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    color: colors.white,
+    fontWeight: 700,
+    cursor: 'pointer',
+  },
 
   sectionHeader: { fontSize: 18, fontWeight: 'bold', margin: '10px 0 0', color: colors.textPrimary },
   overviewGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 },
@@ -528,6 +675,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   forecastDay: { fontSize: 14, fontWeight: 500, color: colors.textPrimary, width: 80 },
   forecastIcon: { flex: 1, textAlign: 'center' as const },
+  forecastRain: { fontSize: 12, fontWeight: 700, color: colors.info, width: 46, textAlign: 'center' as const },
   forecastTemps: { display: 'flex', flexDirection: 'column', alignItems: 'flex-end' },
 
   // Floating Action Button

@@ -36,6 +36,96 @@ const colors = {
     cloudy: '#90A4AE'
 };
 
+const weatherText = {
+    en: {
+        unknownLocation: 'Unknown Location',
+        weatherApiFailed: 'Weather API failed',
+        currentLocation: 'Current Location',
+        addCity: 'Add City',
+        todaysHighlights: "Today's Highlights",
+        precipitation: 'Precipitation',
+        humidity: 'Humidity',
+        wind: 'Wind',
+        uvAndAqi: 'UV Index & AQI',
+        sunriseSunset: 'Sunrise & Sunset',
+        today: 'Today',
+        next24h: 'Next 24h',
+        outlook3Months: '3 Months Outlook',
+        chanceOfRain: 'Chance of Rain',
+        forecast3Days: '3 Days Forecast',
+        searchCity: 'Search City',
+        cityPlaceholder: 'E.g. Los Angeles',
+        sunny: 'Sunny',
+        cloudy: 'Cloudy',
+        storms: 'Storms',
+        rainy: 'Rainy',
+        october: 'October',
+        november: 'November',
+        december: 'December',
+        retreatingMonsoon: 'Retreating Monsoon',
+        cycloneAlerts: 'Cyclone Alerts',
+        coolDry: 'Cool & Dry',
+    },
+    hi: {
+        unknownLocation: 'अज्ञात स्थान',
+        weatherApiFailed: 'मौसम एपीआई विफल रहा',
+        currentLocation: 'वर्तमान स्थान',
+        addCity: 'शहर जोड़ें',
+        todaysHighlights: 'आज की मुख्य बातें',
+        precipitation: 'वर्षण',
+        humidity: 'आर्द्रता',
+        wind: 'हवा',
+        uvAndAqi: 'यूवी सूचकांक और AQI',
+        sunriseSunset: 'सूर्योदय और सूर्यास्त',
+        today: 'आज',
+        next24h: 'अगले 24 घंटे',
+        outlook3Months: '3 महीने का अनुमान',
+        chanceOfRain: 'बारिश की संभावना',
+        forecast3Days: '3 दिन का पूर्वानुमान',
+        searchCity: 'शहर खोजें',
+        cityPlaceholder: 'उदा. लॉस एंजेलिस',
+        sunny: 'धूप',
+        cloudy: 'बादल',
+        storms: 'तूफान',
+        rainy: 'बारिश',
+        october: 'अक्टूबर',
+        november: 'नवंबर',
+        december: 'दिसंबर',
+        retreatingMonsoon: 'लौटता मानसून',
+        cycloneAlerts: 'चक्रवात चेतावनी',
+        coolDry: 'ठंडा और शुष्क',
+    },
+    te: {
+        unknownLocation: 'తెలియని స్థానం',
+        weatherApiFailed: 'వాతావరణ API విఫలమైంది',
+        currentLocation: 'ప్రస్తుత స్థానం',
+        addCity: 'నగరం జోడించండి',
+        todaysHighlights: 'ఈరోజు ముఖ్యాంశాలు',
+        precipitation: 'వర్షపాతం',
+        humidity: 'ఆర్ద్రత',
+        wind: 'గాలి',
+        uvAndAqi: 'UV సూచీ మరియు AQI',
+        sunriseSunset: 'సూర్యోదయం మరియు సూర్యాస్తమయం',
+        today: 'ఈరోజు',
+        next24h: 'తదుపరి 24 గంటలు',
+        outlook3Months: '3 నెలల అంచనా',
+        chanceOfRain: 'వర్ష అవకాశం',
+        forecast3Days: '3 రోజుల అంచనా',
+        searchCity: 'నగరం వెతకండి',
+        cityPlaceholder: 'ఉదా. లాస్ ఏంజెల్స్',
+        sunny: 'ఎండ',
+        cloudy: 'మేఘావృతం',
+        storms: 'తుఫానులు',
+        rainy: 'వర్షం',
+        october: 'అక్టోబర్',
+        november: 'నవంబర్',
+        december: 'డిసెంబర్',
+        retreatingMonsoon: 'తిరోగమించే మాన్సూన్',
+        cycloneAlerts: 'చండమಾರುత హెచ్చరికలు',
+        coolDry: 'చల్లగా మరియు పొడిగా',
+    },
+} as const;
+
 // --- CSS ANIMATIONS ---
 const AnimationStyles = () => (
     <style>
@@ -135,6 +225,8 @@ const ActivityIndicator = () => (
 // --- MAIN COMPONENT ---
 const WeatherScreen = () => {
     const { language } = useLanguage();
+    const text = weatherText[language];
+    const locale = language === 'hi' ? 'hi-IN' : language === 'te' ? 'te-IN' : 'en-US';
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -153,7 +245,7 @@ const WeatherScreen = () => {
         try {
             // Main Weather API
             const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relativehumidity_2m,precipitation,weathercode,windspeed_10m&hourly=temperature_2m,precipitation_probability,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max&timezone=auto`);
-            if (!wRes.ok) throw new Error("Weather API failed");
+            if (!wRes.ok) throw new Error(text.weatherApiFailed);
             const wData = await wRes.json();
 
             // AQI API
@@ -172,10 +264,10 @@ const WeatherScreen = () => {
             };
             const mapCodeToCondition = (code: number) => {
                 const type = mapCodeToType(code);
-                if (type === 'sunny') return { text: 'Sunny', icon: MdWbSunny, color: colors.sunny };
-                if (type === 'cloudy') return { text: 'Cloudy', icon: MdCloudQueue, color: colors.cloudy };
-                if (type === 'stormy') return { text: 'Storms', icon: MdFlashOn, color: colors.primary };
-                return { text: 'Rainy', icon: MdWaterDrop, color: colors.rainy };
+                if (type === 'sunny') return { text: text.sunny, icon: MdWbSunny, color: colors.sunny };
+                if (type === 'cloudy') return { text: text.cloudy, icon: MdCloudQueue, color: colors.cloudy };
+                if (type === 'stormy') return { text: text.storms, icon: MdFlashOn, color: colors.primary };
+                return { text: text.rainy, icon: MdWaterDrop, color: colors.rainy };
             };
 
             const formatTime = (isoString: string) => {
@@ -210,7 +302,7 @@ const WeatherScreen = () => {
             const multiDay = wData.daily.time.slice(1, 4).map((dateStr: string, index: number) => {
                 const actIdx = index + 1;
                 return {
-                    day: new Date(dateStr).toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-US', { weekday: 'long' }),
+                    day: new Date(dateStr).toLocaleDateString(locale, { weekday: 'long' }),
                     weatherType: mapCodeToType(wData.daily.weathercode[actIdx]),
                     high: Math.round(wData.daily.temperature_2m_max[actIdx]),
                     low: Math.round(wData.daily.temperature_2m_min[actIdx]),
@@ -231,15 +323,15 @@ const WeatherScreen = () => {
                     type: mapCodeToType(wData.current.weathercode),
                     cond: mapCodeToCondition(wData.current.weathercode),
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                    date: new Date().toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-US', { weekday: 'long', day: '2-digit', month: 'short' })
+                    date: new Date().toLocaleDateString(locale, { weekday: 'long', day: '2-digit', month: 'short' })
                 },
                 hourlyChart,
                 chanceOfRain,
                 multiDay,
                 outlook: [
-                    { month: "October", desc: "Retreating Monsoon", avg: "28°C", icon: MdWaterDrop, color: '#FCD34D' },
-                    { month: "November", desc: "Cyclone Alerts", avg: "24°C", icon: MdWaterDrop, color: '#EF4444' },
-                    { month: "December", desc: "Cool & Dry", avg: "18°C", icon: MdCloudQueue, color: '#3B82F6' }
+                    { month: text.october, desc: text.retreatingMonsoon, avg: "28°C", icon: MdWaterDrop, color: '#FCD34D' },
+                    { month: text.november, desc: text.cycloneAlerts, avg: "24°C", icon: MdWaterDrop, color: '#EF4444' },
+                    { month: text.december, desc: text.coolDry, avg: "18°C", icon: MdCloudQueue, color: '#3B82F6' }
                 ]
             });
         } catch (err: any) {
@@ -253,13 +345,13 @@ const WeatherScreen = () => {
         try {
             const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
             const data = await response.json();
-            setLocation({ name: `${data.city || data.locality || 'Unknown'}, ${data.principalSubdivision}`, latitude: lat, longitude: lon });
+            setLocation({ name: `${data.city || data.locality || text.unknownLocation}, ${data.principalSubdivision}`, latitude: lat, longitude: lon });
             await fetchWeatherData(lat, lon);
         } catch {
-            setLocation({ name: "Unknown Location", latitude: lat, longitude: lon });
+            setLocation({ name: text.unknownLocation, latitude: lat, longitude: lon });
             await fetchWeatherData(lat, lon);
         }
-    }, [fetchWeatherData]);
+    }, [fetchWeatherData, text.unknownLocation]);
 
     useEffect(() => {
         if (navigator.geolocation) {
@@ -299,7 +391,7 @@ const WeatherScreen = () => {
             {/* TOP HEADER */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
                 <div>
-                    <span style={{ fontSize: 13, color: colors.textSecondary, fontWeight: 600 }}>Current Location</span>
+                    <span style={{ fontSize: 13, color: colors.textSecondary, fontWeight: 600 }}>{text.currentLocation}</span>
                     <div style={styles.locationPill}>
                         <MdLocationOn color={colors.primary} size={20} />
                         <span style={styles.locationText}>{location?.name}</span>
@@ -350,35 +442,35 @@ const WeatherScreen = () => {
                             style={styles.addCityCard}
                         >
                             <span style={{ fontSize: 40, color: colors.primaryLight, marginBottom: 8 }}>+</span>
-                            <span style={{ fontSize: 16, fontWeight: 600, color: colors.primaryDark }}>Add City</span>
+                            <span style={{ fontSize: 16, fontWeight: 600, color: colors.primaryDark }}>{text.addCity}</span>
                         </div>
                     </div>
 
                     {/* Today's Highlights */}
                     <div>
-                        <h3 style={styles.sectionTitle}>Today's Highlights</h3>
+                        <h3 style={styles.sectionTitle}>{text.todaysHighlights}</h3>
                         <div style={styles.highlightsGrid}>
                             <Card style={styles.highlightItem}>
-                                <span style={styles.hLabel}>Precipitation</span>
+                                <span style={styles.hLabel}>{text.precipitation}</span>
                                 <span style={styles.hValue}>{current.precip}%</span>
                             </Card>
                             <Card style={styles.highlightItem}>
-                                <span style={styles.hLabel}>Humidity</span>
+                                <span style={styles.hLabel}>{text.humidity}</span>
                                 <span style={styles.hValue}>{current.humidity}%</span>
                             </Card>
                             <Card style={styles.highlightItem}>
-                                <span style={styles.hLabel}>Wind</span>
+                                <span style={styles.hLabel}>{text.wind}</span>
                                 <span style={styles.hValue}>{current.wind} <span style={{ fontSize: 14 }}>km/h</span></span>
                             </Card>
                             <Card style={styles.highlightItem}>
-                                <span style={styles.hLabel}>UV Index & AQI</span>
+                                <span style={styles.hLabel}>{text.uvAndAqi}</span>
                                 <div style={{ display: 'flex', gap: 12 }}>
                                     <span style={{ ...styles.hValue, color: colors.sunny }}>UV {current.uv}</span>
                                     <span style={{ ...styles.hValue, color: colors.primary }}>AQI {current.aqi}</span>
                                 </div>
                             </Card>
                             <Card style={{ ...styles.highlightItem, gridColumn: 'span 2' }}>
-                                <span style={styles.hLabel}>Sunrise & Sunset</span>
+                                <span style={styles.hLabel}>{text.sunriseSunset}</span>
                                 <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginTop: 8 }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                         <div style={{ backgroundColor: '#FFF4E5', padding: 8, borderRadius: '50%' }}><WiSunrise size={24} color="#F59E0B" /></div>
@@ -396,8 +488,8 @@ const WeatherScreen = () => {
                     {/* Hourly Curve */}
                     <Card style={{ padding: '32px 24px', position: 'relative' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
-                            <span style={{ fontWeight: 600, color: colors.textPrimary }}>Today</span>
-                            <span style={{ color: colors.textSecondary }}>Next 24h</span>
+                            <span style={{ fontWeight: 600, color: colors.textPrimary }}>{text.today}</span>
+                            <span style={{ color: colors.textSecondary }}>{text.next24h}</span>
                         </div>
 
                         <div className="custom-scrollbar" style={{ display: 'flex', overflowX: 'auto', gap: 40, paddingBottom: 16 }}>
@@ -417,7 +509,7 @@ const WeatherScreen = () => {
 
                     {/* 3 Months Forecast */}
                     <div>
-                        <h3 style={styles.sectionTitle}>3 Months Outlook</h3>
+                        <h3 style={styles.sectionTitle}>{text.outlook3Months}</h3>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
                             {outlook.map((o: any, i: number) => (
                                 <Card key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: `4px solid ${o.color}` }}>
@@ -438,7 +530,7 @@ const WeatherScreen = () => {
                     {/* Chance of rain */}
                     <Card>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24, alignItems: 'center' }}>
-                            <span style={{ fontSize: 18, fontWeight: 700, color: colors.textPrimary }}>Chance of Rain</span>
+                            <span style={{ fontSize: 18, fontWeight: 700, color: colors.textPrimary }}>{text.chanceOfRain}</span>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                             {chanceOfRain.map((c: any, i: number) => (
@@ -455,7 +547,7 @@ const WeatherScreen = () => {
 
                     {/* 3 Days Forecast */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                        <span style={{ fontSize: 18, fontWeight: 700, color: colors.textPrimary, marginLeft: 4 }}>3 Days Forecast</span>
+                        <span style={{ fontSize: 18, fontWeight: 700, color: colors.textPrimary, marginLeft: 4 }}>{text.forecast3Days}</span>
 
                         {multiDay.map((d: any, i: number) => (
                             <Card key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', backgroundColor: d.weatherType === 'rainy' ? '#EBF0FE' : colors.surface }}>
@@ -482,14 +574,14 @@ const WeatherScreen = () => {
                 <div style={styles.modalOverlay} onClick={() => setIsModalVisible(false)}>
                     <div style={styles.modal} onClick={e => e.stopPropagation()}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
-                            <h3 style={{ margin: 0 }}>Search City</h3>
+                            <h3 style={{ margin: 0 }}>{text.searchCity}</h3>
                             <button onClick={() => setIsModalVisible(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><MdClose size={24} /></button>
                         </div>
                         <div style={{ display: 'flex', border: `1px solid ${colors.border}`, borderRadius: 12, padding: '10px 16px', gap: 10 }}>
                             <MdSearch size={20} color={colors.textSecondary} />
                             <input
                                 style={{ border: 'none', outline: 'none', width: '100%', fontSize: 16 }}
-                                placeholder="E.g. Los Angeles"
+                                placeholder={text.cityPlaceholder}
                                 value={cityInput}
                                 onChange={async (e) => {
                                     setCityInput(e.target.value);

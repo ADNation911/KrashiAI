@@ -1,10 +1,29 @@
-# Connect to New Repo https://github.com/Mohit20057/SPMProject.git
+# ML Server Integration - Fix "Random Data" Issue
 
-## TODO Steps:
+**Status:** Frontend Context Flow ✅ | Backend Servers ⏳ | Display Fix 🔄
 
-- [ ] Step 1: git init
-- [ ] Step 2: git add .
-- [ ] Step 3: git commit -m "Initial commit"
-- [ ] Step 4: git remote add origin https://github.com/Mohit20057/SPMProject.git
-- [ ] Step 5: git push -u origin main
-- [ ] Step 6: Verify connection
+## Backend Servers (MUST RUN for Real ML Data)
+
+```
+Terminal 1: cd "Crop-Recommendation-System" && pip install -r requirements.txt && python app.py
+Terminal 2: cd agrismart-server && node server.js
+```
+
+- Flask ML Model: http://localhost:5000
+- Node Proxy API: http://localhost:8081/api/crop-recommend
+
+## Frontend Updates (In Progress)
+
+```
+- [x] RecommendationContext created
+- [x] App.tsx wrapped with Provider
+- [x] DataEntryForm submits to API + sets context
+- [ ] CropRecommendations: Use context.data.recommendations (server ML output)
+  ↓ Transform server format → CropData cards
+- [ ] Add "Clear Results" → reload demo data
+- [ ] Test full flow: Form → ML API → Context → Real Crop Recs
+```
+
+**Current Issue Fixed By:** CropRecommendations reading context.data.recommendations instead of hardcoded array.
+
+**Next Step:** Edit `src/pages/CropRecommendations.tsx`

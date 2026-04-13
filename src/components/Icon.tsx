@@ -30,6 +30,8 @@ import {
   Person as PersonIcon,
   PersonOutline as PersonOutlineIcon,
   Phone as PhoneIcon,
+  Science as ScienceIcon,
+  Send as SendIcon,
   Storage as StorageIcon,
   Straighten as StraightenIcon,
   Thermostat as ThermostatIcon,
@@ -40,6 +42,7 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
   Warning as WarningIcon,
+  WaterDrop as WaterDropIcon,
   WbSunny as WbSunnyIcon,
 } from '@mui/icons-material';
 import React from 'react';
@@ -64,6 +67,8 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   'track-changes': TrackChangesIcon,
   'person': PersonIcon,
   'phone': PhoneIcon,
+  'science': ScienceIcon,
+  'send': SendIcon,
   'straighten': StraightenIcon,
   'my-location': MyLocationIcon,
   'location-searching': LocationSearchingIcon,
@@ -77,6 +82,7 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   'arrow-forward': ArrowForwardIcon,
   'chat': ChatIcon,
   'warning': WarningIcon,
+  'water-drop': WaterDropIcon,
   'thermostat': ThermostatIcon,
   'opacity': OpacityIcon,
   'grain': GrainIcon,
