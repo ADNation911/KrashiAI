@@ -357,7 +357,8 @@ const WeatherScreen = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 pos => resolveLocation(pos.coords.latitude, pos.coords.longitude),
-                () => resolveLocation(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude)
+                () => resolveLocation(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude),
+                { timeout: 5000 }
             );
         } else {
             resolveLocation(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude);

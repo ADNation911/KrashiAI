@@ -15,6 +15,9 @@ export type CropProfile = {
   hiReasons: string[];
 };
 
+import coconutImg from "../assets/crops/coconut.jpg";
+import papayaImg from "../assets/crops/papaya.jpg";
+
 export const cropMapping: Record<string, CropProfile> = {
   Rice: {
     name: "Rice",
@@ -315,8 +318,7 @@ export const cropMapping: Record<string, CropProfile> = {
   Papaya: {
     name: "Papaya",
     hiName: "पपीता",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Papaya_tree_and_fruit.jpg/800px-Papaya_tree_and_fruit.jpg",
+    image: papayaImg,
     description: "Fast-fruiting tree with year-round production.",
     hiDescription: "वर्ष भर उत्पादन के साथ तेज फल देने वाला वृक्ष।",
     soilMatch: 79,
@@ -332,8 +334,7 @@ export const cropMapping: Record<string, CropProfile> = {
   Coconut: {
     name: "Coconut",
     hiName: "नारियल",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/f/f1/Coconuts_on_tree.jpg",
+    image: coconutImg,
     description: "Long-term plantation with multiple products.",
     hiDescription: "एकाधिक उत्पादों के साथ दीर्घकालिक वृक्षारोपण।",
     soilMatch: 75,

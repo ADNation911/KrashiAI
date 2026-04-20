@@ -599,6 +599,7 @@ const DataEntryForm: React.FC = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => setLocation(position),
         () => alert("Permission to access location was denied"),
+        { timeout: 5000 },
       );
     }
   }, []);
@@ -625,6 +626,14 @@ const DataEntryForm: React.FC = () => {
       handleInputChange("windSpeed", dummyWeatherData.windSpeed);
       handleInputChange("cloudCoverage", dummyWeatherData.cloudCoverage);
       handleInputChange("surfacePressure", dummyWeatherData.surfacePressure);
+      
+      const month = new Date().getMonth() + 1;
+      let autoSeason = "monsoon";
+      if (month >= 4 && month <= 5) autoSeason = "summer";
+      else if (month >= 10 || month <= 3) autoSeason = "winter";
+      else autoSeason = "monsoon";
+      handleInputChange("season", autoSeason);
+
       setIsWeatherLoading(false);
     }, 1500);
   }, [location, handleInputChange]);
