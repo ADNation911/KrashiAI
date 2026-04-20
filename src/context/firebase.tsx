@@ -1,46 +1,3 @@
-// // Import the functions you need from the SDKs you need
-// import { initializeApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
-// // TODO: Add SDKs for Firebase products that you want to use
-// // https://firebase.google.com/docs/web/setup#available-libraries
-
-// // Your web app's Firebase configuration
-// // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// const firebaseConfig = {
-//   apiKey: "",
-//   authDomain: "",
-//   projectId: "",
-//   storageBucket: "",
-//   messagingSenderId: "",
-//   appId: "",
-//   measurementId: "G-3YCNLNEQS5"
-// };
-
-// // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-// const auth = getAuth(app);
-// export { app, auth };
-// const analytics = getAnalytics(app);
-
-// // File: src/context/firebase.tsx
-
-// import { initializeApp } from "firebase/app";
-// import { getAuth } from "firebase/auth";
-
-// // Your web app's Firebase configuration
-// const firebaseConfig = {
-  
-// };
-
-// // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-
-// // Initialize Firebase Auth
-// const auth = getAuth(app);
-
-// // 👇 THIS IS THE MOST IMPORTANT LINE
-// export { app, auth };
-
 // src/context/firebase.tsx
 import { initializeApp } from "firebase/app";
 import { 
@@ -51,15 +8,15 @@ import {
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// ✅ Paste your Firebase config from Firebase Console
+// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "agrismart-2d32a.firebaseapp.com",
-  projectId: "agrismart-2d32a",
-  storageBucket: "agrismart-2d32a.firebasestorage.app",
-  messagingSenderId: "754053135918",
-  appId: "1:754053135918:web:bc6b4291cc4193a11a69bf",
-  measurementId: "G-435C8EF1F7"
+  authDomain: "krashiai.firebaseapp.com",
+  projectId: "krashiai",
+  storageBucket: "krashiai.firebasestorage.app",
+  messagingSenderId: "647172284027",
+  appId: "1:647172284027:web:db6b46e057522518468cde",
+  measurementId: "G-27WVVRWJ38"
 };
 
 const app = initializeApp(firebaseConfig);
