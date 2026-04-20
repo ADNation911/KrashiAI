@@ -303,7 +303,7 @@ const CropRecommendations: React.FC = () => {
                       <span style={styles.statLabel}>{copy.expectedYield}</span>
                       <span style={styles.statValue}>
                         {cropData?.yieldPerAcre
-                          ? `${cropData.yieldPerAcre}`
+                          ? `${cropData.yieldPerAcre} ${cropData.yieldPerAcre > 1000 ? "Nuts" : "Tons"}`
                           : copy.notAvailable}
                       </span>
                     </div>

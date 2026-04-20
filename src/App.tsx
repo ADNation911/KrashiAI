@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  BrowserRouter,
+  HashRouter,
   Link,
   Route,
   Routes,
@@ -131,9 +131,9 @@ const AppLayout: React.FC = () => {
 // Main App Component
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AppLayout />
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 

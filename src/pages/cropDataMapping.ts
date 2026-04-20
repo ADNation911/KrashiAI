@@ -316,7 +316,7 @@ export const cropMapping: Record<string, CropProfile> = {
     name: "Papaya",
     hiName: "पपीता",
     image:
-      "https://images.unsplash.com/photo-1584748187444-5e770c0e4095?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Papaya_tree_and_fruit.jpg/800px-Papaya_tree_and_fruit.jpg",
     description: "Fast-fruiting tree with year-round production.",
     hiDescription: "वर्ष भर उत्पादन के साथ तेज फल देने वाला वृक्ष।",
     soilMatch: 79,
@@ -333,7 +333,7 @@ export const cropMapping: Record<string, CropProfile> = {
     name: "Coconut",
     hiName: "नारियल",
     image:
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+      "https://upload.wikimedia.org/wikipedia/commons/f/f1/Coconuts_on_tree.jpg",
     description: "Long-term plantation with multiple products.",
     hiDescription: "एकाधिक उत्पादों के साथ दीर्घकालिक वृक्षारोपण।",
     soilMatch: 75,
