@@ -53,7 +53,7 @@ import { getFirestore } from "firebase/firestore";
 
 // ✅ Paste your Firebase config from Firebase Console
 const firebaseConfig = {
-  apiKey: "AIzaSyAiTWDaxZU1kLl2H-mIon4exZBrI8e22nc",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "agrismart-2d32a.firebaseapp.com",
   projectId: "agrismart-2d32a",
   storageBucket: "agrismart-2d32a.firebasestorage.app",
