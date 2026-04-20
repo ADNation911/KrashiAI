@@ -717,7 +717,8 @@ const DataEntryForm: React.FC = () => {
     console.log("Submitting form data to crop recommendation model:", payload);
 
     try {
-      const res = await fetch("http://localhost:8081/api/crop-recommend", {
+      const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8081";
+      const res = await fetch(`${BASE_URL}/api/crop-recommend`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
